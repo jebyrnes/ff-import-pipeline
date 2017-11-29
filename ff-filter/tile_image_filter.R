@@ -40,7 +40,7 @@ scenes_out <- foreach(scene = files) %dopar%{
   accepted <- read_csv(paste0(scene_dir, scene, "/accepted/manifest.csv")) %>%
     filter(`#filename` %in% good_img) %>%
     mutate(`!scene` = gsub("temp\\/", "", `!scene`)) %>%
-    mutate(`#filename` = paste(scene, `#filename`, sep="--"))
+    mutate(`#filename` = paste(scene, `#filename`, sep="_"))
   
   write_csv(accepted, paste0(out_dir, "/accepted/", scene, "_manifest.csv"))
   
