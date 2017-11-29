@@ -29,10 +29,10 @@
   
 10. Use https://github.com/zooniverse/panoptes-cli to upload new subject set and manifest. Do this from within the `new_for_upload` directory.
      - `panoptes subject-set create 2864 "NAME OF SET"`  
-     - `panoptes subject-set upload-subjects 2864 manifest.csv`  
+     - check subject set ids with `panoptes subject-set ls -p 2684`
+     - `panoptes subject-set upload-subjects SUBJ_SET_ID  manifest.csv`  
      - After this point, you can manage things on the site or...
      - check workflows with `panoptes workflow ls -p 2864`  
-     - check subject set ids with `panoptes subject-set ls -p 2684`
      - add new subject set by number `panoptes workflow add-subject-sets workflow_id subj_id` 
   
 11. Archive subject set, manifest, and rejected manifest in `archived_uploaded`
