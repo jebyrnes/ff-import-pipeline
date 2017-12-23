@@ -1,5 +1,6 @@
 library(png)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 
 make_color_df <- function(atile){
   data.frame(
