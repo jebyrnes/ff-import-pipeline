@@ -1,5 +1,6 @@
 #Load methods and libraries
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 library(foreach)
 library(doParallel)
 library(readr)
@@ -9,16 +10,21 @@ scene_dir <- "../ff-import/"
 out_dir <- "../new_for_upload"
 
 #setup the parallel backend
-registerDoParallel(cores=4)
+registerDoParallel(cores=10)
 
 
 #get a list of scenes
 files <- list.files(scene_dir)
-files <- files[grep("LT05", files)] #fix to deal with other satellites
+files <- files[grep("LC08", files)] #fix to deal with other satellites
 #files <- c(files, "grid_350")
+
+print("Starting to filter scenes...")
 
 #for each scene
 scenes_out <- foreach(scene = files) %dopar%{
+
+  cat(paste0("Starting ", scene, "\n"))
+
   #1) Figure out which images are good
   good_img <- get_filtered_tiles_by_score(paste0(scene_dir, scene),
                                           fun = get_rb_quant,
@@ -27,6 +33,8 @@ scenes_out <- foreach(scene = files) %dopar%{
   
   #2) Write good images to the new output directory
   new_img <- paste(scene, good_img, sep="_") 
+
+  cat(paste0("Copying good images from ", scene, "\n"))
   
   #ugh, I hate a for loop in R, but....
   for(i in 1:length(good_img)){
@@ -36,8 +44,10 @@ scenes_out <- foreach(scene = files) %dopar%{
                  sep = " "))  
   }
   
+  cat(paste0("Writing manifests for ", scene, "\n"))
   #3) Write a new manifest for the scene
-  accepted <- read_csv(paste0(scene_dir, scene, "/accepted/manifest.csv")) %>%
+  suppressWarnings(accepted <- read_csv(paste0(scene_dir, scene, "/accepted/manifest.csv")) )
+  accepted <- accepted %>%
     filter(`#filename` %in% good_img) %>%
     mutate(`!scene` = gsub("temp\\/", "", `!scene`)) %>%
     mutate(`#filename` = paste(scene, `#filename`, sep="_"))
@@ -46,7 +56,9 @@ scenes_out <- foreach(scene = files) %dopar%{
   
   
   #4) Write a new rejection manifest for the scene
-  new_rejected <- read_csv(paste0(scene_dir, scene, "/accepted/manifest.csv")) %>%
+  suppressWarnings(new_rejected <- read_csv(paste0(scene_dir, scene, "/accepted/manifest.csv")) )
+
+  new_rejected <- new_rejected %>%
     filter(!(`#filename` %in% good_img)) %>%
     mutate(`#reason` = "All water, clouds, or blank")
   
@@ -60,14 +72,16 @@ scenes_out <- foreach(scene = files) %dopar%{
   scene
 }
 
+print("Done parsing scenes.")
+
 #Now, merge accepted manifests
 merge_manifests <- function(adir){
   manifest_files <- list.files( paste0(out_dir, "/", adir, "/"))
   manifest_files <- manifest_files[-grep("\\.md", manifest_files)]
-  manifest <- read_csv(paste0(out_dir, "/", adir, "/", manifest_files[1])) 
+ suppressWarnings(  manifest <- read_csv(paste0(out_dir, "/", adir, "/", manifest_files[1])) )
   for(a_manifest in manifest_files[-1]){
     manifest <- manifest %>%
-      bind_rows(read_csv(paste0(out_dir, "/", adir, "/", a_manifest)))
+      suppressWarnings(bind_rows(read_csv(paste0(out_dir, "/", adir, "/", a_manifest))))
   }
   
   if(adir=="accepted"){
@@ -80,5 +94,8 @@ merge_manifests <- function(adir){
 }
 
 #do the merging!
+print("Making new accepted manifest.")
 merge_manifests("accepted")
+
+print("Making new rejected manifest.")
 merge_manifests("rejected")
