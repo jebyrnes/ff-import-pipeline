@@ -27,7 +27,7 @@ get_channel_max <- function(atile){
 get_channel_percentile <- function(atile, quant = 0.95){
   # reshape image into a data frame
   df <- make_color_df(atile)
-  map_dbl(df, ~quantile(., quant))
+  map_dbl(df, ~quantile(., quant, na.rm=TRUE))
 }
 
 
@@ -40,7 +40,7 @@ get_rb_max <- function(atile){
 get_rb_quant <- function(atile, quant = 0.95){
   # reshape image into a data frame
   df <- make_color_df(atile)
-  quantile(df$red/df$blue, quant)
+  quantile(df$red/df$blue, quant, na.rm=TRUE)
 }
 
 
@@ -54,6 +54,9 @@ get_filtered_tiles_by_colors <- function(dir,
   f <- list.files(dir)
   f <- f[grep("png", f)]
   
+  #debug
+  cat(paste0("reading from ", dir, "\n"))
+
   adf <- data.frame(i = grep("png", f)) %>%
     group_by(i) %>%
     mutate(file = f[i],

@@ -62,7 +62,7 @@ scenes_out <- foreach(scene = files) %dopar%{
     filter(!(`#filename` %in% good_img)) %>%
     mutate(`#reason` = "All water, clouds, or blank")
   
-  rejected <- read_csv(paste0(scene_dir, scene, "/rejected/rejected.csv"))
+  suppressWarnings(rejected <- read_csv(paste0(scene_dir, scene, "/rejected/rejected.csv")))
   
   rejected <- bind_rows(rejected, new_rejected) %>%
     mutate(`!scene` = gsub("temp\\/", "", `!scene`))
