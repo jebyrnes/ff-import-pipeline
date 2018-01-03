@@ -42,7 +42,10 @@ get_rb_quant <- function(atile, quant = 0.95){
   df <- make_color_df(atile)
   quantile(df$red/df$blue, quant, na.rm=TRUE)
 }
-
+safe_read_png <- function(dir, afile){
+  print(paste0(dir, afile))
+  readPNG(paste0(dir, afile))
+}
 
 get_filtered_tiles_by_colors <- function(dir, 
                                          fun = get_channel_max,
@@ -60,7 +63,8 @@ get_filtered_tiles_by_colors <- function(dir,
   adf <- data.frame(i = grep("png", f)) %>%
     group_by(i) %>%
     mutate(file = f[i],
-           vals = list(fun(readPNG(paste0(dir, f[i])))),
+           vals = list(fun(safe_read_png(dir, f[i]),  ...)),
+#           vals = list(fun(readPNG(paste0(dir, f[i])))),
            red = vals[[1]][1],
            green = vals[[1]][2],
            blue = vals[[1]][3]) %>%
@@ -88,7 +92,8 @@ get_filtered_tiles_by_score <- function(dir,
   adf <- data.frame(i = grep("png", f)) %>%
     group_by(i) %>%
     mutate(file = f[i],
-           vals = fun(readPNG(paste0(dir, f[i])), ...)) %>%
+           vals = fun(safe_read_png(dir, f[i]),  ...)) %>%
+#           vals = fun(readPNG(paste0(dir, f[i])), ...)) %>%
     ungroup() 
   
   adf_filtered <- adf %>% 

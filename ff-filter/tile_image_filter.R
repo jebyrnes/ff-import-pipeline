@@ -7,7 +7,7 @@ library(readr)
 source("./image_filtering_method.R")
 
 scene_dir <- "../ff-import/"
-out_dir <- "../new_for_upload"
+out_dir <- "./new_for_upload"
 
 #setup the parallel backend
 registerDoParallel(cores=10)
