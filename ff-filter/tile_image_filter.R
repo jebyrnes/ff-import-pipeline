@@ -29,7 +29,7 @@ scenes_out <- foreach(scene = files) %dopar%{
   cat(paste0("Checking for valid accepted tiles in ", scene, "\n"))
   
   #0) Are there any tiles to filter?
-  areFiles <- length(list.files(paste0(scene_dir, scene, "accepted"))>0)
+  areFiles <- length(list.files(paste0(scene_dir, scene, "/accepted"))>0)
   
   if(areFiles==0){
     cat(paste0("No accepted tiles in ", scene, "\n"))
