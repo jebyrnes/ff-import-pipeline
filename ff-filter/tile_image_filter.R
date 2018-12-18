@@ -18,7 +18,7 @@ registerDoParallel(cores=10)
 
 #get a list of scenes
 files <- list.files(scene_dir)
-files <- files[grep("[LC08|LT05|LE07]", files)] #fix to deal with other satellites
+files <- files[grep("(LC08|LT05|LE07)", files)] #fix to deal with other satellites
 #an empty one - LC08_L1TP_220096_20140130_20170426_01_T1_tiles
 #files <- c(files, "grid_350")
 #files <- files[grep("empty", files)] #fix to deal with other satellites
