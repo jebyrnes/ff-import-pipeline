@@ -59,16 +59,21 @@ scenes_out <- foreach(scene = files) %dopar%{
 					  quant = 0.98)
   
   #2) Write good images to the new output directory
-  new_img <- paste(scene, good_img, sep="_") 
+  if(length(good_img)>0){
+    new_img <- paste(scene, good_img, sep="_") 
 
-  cat(paste0("Copying good images from ", scene, "\n"))
+    cat(paste0("Copying good images from ", scene, "\n"))
   
   #ugh, I hate a for loop in R, but....
-  for(i in 1:length(good_img)){
-    system(paste("cp", 
-                 paste0(scene_dir, scene, "/accepted/", good_img[i]),
-                 paste(out_dir,  new_img[i], sep="/"),
-                 sep = " "))  
+
+    for(i in 1:length(good_img)){
+      system(paste("cp", 
+                   paste0(scene_dir, scene, "/accepted/", good_img[i]),
+                   paste(out_dir,  new_img[i], sep="/"),
+                   sep = " "))  
+    }
+  }else{
+    cat(paste0("No good images from ", scene, "\n"))
   }
   
   cat(paste0("Writing manifests for ", scene, "\n"))
