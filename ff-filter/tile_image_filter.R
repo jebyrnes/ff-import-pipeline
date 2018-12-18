@@ -1,3 +1,6 @@
+#for debug
+sink("out.txt")
+
 #Load methods and libraries
 library(dplyr)
 library(tidyr)
@@ -123,3 +126,5 @@ merge_manifests("accepted")
 
 print("Making new rejected manifest.")
 merge_manifests("rejected")
+
+sink()
