@@ -109,7 +109,10 @@ print("Done parsing scenes.")
 #Now, merge accepted manifests
 merge_manifests <- function(adir){
   manifest_files <- list.files( paste0(out_dir, "/", adir, "/"))
-  manifest_files <- manifest_files[-grep("\\.md", manifest_files)]
+  
+  #get rid of .md files from github
+  md_files <- grep("\\.md", manifest_files)
+  if(length(md_files) > 0) manifest_files <- manifest_files[-grep("\\.md", manifest_files)]
   
   #get a good start file
   for(i in 1:length(manifest_files)){
