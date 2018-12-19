@@ -110,10 +110,20 @@ print("Done parsing scenes.")
 merge_manifests <- function(adir){
   manifest_files <- list.files( paste0(out_dir, "/", adir, "/"))
   manifest_files <- manifest_files[-grep("\\.md", manifest_files)]
-  suppressMessages(  manifest <- read_csv(paste0(out_dir, "/", adir, "/", manifest_files[1])) )
-  for(a_manifest in manifest_files[-1]){
-    manifest <- manifest %>%
-      suppressMessages(bind_rows(read_csv(paste0(out_dir, "/", adir, "/", a_manifest))))
+  
+  #get a good start file
+  for(i in 1:length(manifest_files)){
+    suppressMessages( manifest <- read_csv(paste0(out_dir, "/", adir, "/", manifest_files[i])) )
+    if(nrow(manifest)>0) break
+  }
+  
+  #scroll through all of the files
+  for(a_manifest in manifest_files[-c(1:i)]){
+    new_manifest <- suppressMessages(read_csv(paste0(out_dir, "/", adir, "/", a_manifest)))
+    if(nrow(new_manifest)>0){
+      manifest <- manifest %>%
+        bind_rows(new_manifest)
+    }
   }
   
   if(adir=="accepted"){
