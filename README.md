@@ -14,7 +14,7 @@
 
 3. When presented, choose all Landsat level 1 products.  
 
-4. Use the create_scene_list pipeline for each satellite to make a list of scenes for download.  
+4. Use the make_scene_list.R in make_scene_list/R for each satellite to make a list of scenes for download.  
 
 5. Go to https://espa.cr.usgs.gov/ordering/new/ and enter a scene list. You might have to do some extra filtering. Make sure you click surface reflectance products. In the description, note that this is for floating forests.  
      - Make sure to archive which scenes you've downloaded in `downloaded_scenes`  
